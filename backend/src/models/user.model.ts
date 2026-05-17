@@ -1,15 +1,9 @@
 import mongoose, {Schema} from "mongoose";
 import bcrypt from "bcryptjs";
-import {UserRole} from "../types/user.types";
+import {iUser} from "../types/user.types";
 
-export interface IUserDoc extends mongoose.Document {
-    name: string;
-    email: string;
-    password: string;
-    createdAt: Date;
-    role: UserRole;
-}
-const userSchema = new Schema<IUserDoc>({
+
+const userSchema = new Schema<iUser>({
     name: {type: String, required: true},
     email: {type: String, required: true, unique: true},
     password: {type: String, required: true},
@@ -20,4 +14,4 @@ const userSchema = new Schema<IUserDoc>({
 });
 
 
-export const User = mongoose.model<IUserDoc>("User", userSchema);
+export const User = mongoose.model<iUser>("User", userSchema);

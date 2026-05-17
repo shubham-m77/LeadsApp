@@ -11,6 +11,7 @@ import healthRoutes from "./routes/health.routes"
 import { errorMiddleware } from "./middlewares/error.middleware";
 import { notFoundMiddleware } from "./middlewares/notFound.middleware";
 import authRoutes from "./routes/auth.routes";
+import leadRoutes from "./routes/lead.routes";
 
 const app:Application = express();
 app.use(helmet());
@@ -28,6 +29,7 @@ if (process.env.NODE_ENV === "development") {
 
 app.use("/api/health", healthRoutes);
 app.use("/api/auth",authRoutes);
+app.use("/api/leads",leadRoutes);
 
 app.use(notFoundMiddleware);
 app.use(errorMiddleware);
