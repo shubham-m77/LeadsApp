@@ -1,6 +1,7 @@
 import { success } from "zod";
 import { Lead } from "../models/lead.model";
 import { AppError } from "../utils/AppError"
+import { LeadQueryParams } from "../types/leads.types";
 import { createLeadSchema, updateLeadSchema } from "../validations/lead.validation"
 
 export const createLeadController =  async (req: Request, res: Response): Promise<Response>=>{
@@ -28,16 +29,81 @@ export const createLeadController =  async (req: Request, res: Response): Promis
     }
 }
 
-export const getLeads = async (req: Request, res: Response): Promise<Response>=>{
-    const leads = await Lead.find().populate("createdBy","name email role").sort({ createdAt: -1 });
-    return res.status(200).json({
-        success: true,
-        message: "Leads fetched  successfully",
-        results:leads.length,
-        leads
+export const getLeads =  async (req: Request, res: Response): Promise<void> => {
+    const {
+      status,
+      source,
+      search,
+      sort = "latest",
+      page = "1"
+    } = req.query as LeadQueryParams;
+
+    const limit = 10;
+    const currentPage = Math.max(Number(page) || 1, 1);
+    const skip = (currentPage - 1) * limit;
+
+    const query: Record<string, unknown> = {};
+
+    if (status && typeof status === "string") {
+      query.status = status;
+    }
+
+    if (source && typeof source === "string") {
+      query.source = source;
+    }
+
+    if (search && typeof search === "string") {
+      query.$or = [
+        {
+          name: {
+            $regex: search,
+            $options: "i"
+          }
+        },
+        {
+          email: {
+            $regex: search,
+            $options: "i"
+          }
+        }
+      ];
+    }
+
+    const sortOption =
+      sort === "oldest" ? { createdAt: 1 as const } : { createdAt: -1 as const };
+
+    const totalLeads = await Lead.countDocuments(query);
+
+    const leads = await Lead.find(query)
+      .populate("createdBy", "name email role")
+      .sort(sortOption)
+      .skip(skip)
+      .limit(limit);
+
+    const totalPages = Math.ceil(totalLeads / limit);
+
+    res.status(200).json({
+      success: true,
+      message: "Leads fetched successfully",
+      data: {
+        leads,
+        pagination: {
+          totalRecords: totalLeads,
+          currentPage,
+          totalPages,
+          limit,
+          hasNextPage: currentPage < totalPages,
+          hasPrevPage: currentPage > 1
+        },
+        filters: {
+          status: status || null,
+          source: source || null,
+          search: search || null,
+          sort
+        }
+      }
     });
-    
-}
+  }
 
 export const getSingleLead = async (req: Request, res: Response): Promise<Response>=>{
     const {id} = req.params;
@@ -45,7 +111,7 @@ export const getSingleLead = async (req: Request, res: Response): Promise<Respon
     if(!lead){
         throw new AppError("lead not found",401)
     }
-    res.status(200).json({
+   return res.status(200).json({
         success:true,
         message:"Lead fetched successfully!",
         lead
