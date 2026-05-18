@@ -28,7 +28,7 @@ export interface LeadFormInput {
     name: string,
     email: string,
     source: LeadSource,
-    status?: LeadStatus
+    status: LeadStatus
 }
 
 export interface LeadFilters {
