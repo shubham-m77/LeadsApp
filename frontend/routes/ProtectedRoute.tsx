@@ -1,9 +1,10 @@
 import { ReactNode } from "react"
 import {Navigate} from "react-router-dom"
+import { authStorage } from "../utils/authStorage";
 
 export const ProtectedRoute = ({children}:{children:ReactNode}) => {
-    if(!localStorage.getItem("smart_leads_token")){
-        return <Navigate to={"/login"} replace/>
-    }
+    if (!authStorage.isAuthenticated()) {
+    return <Navigate to="/login" replace />;
+  }
     return children;
 }

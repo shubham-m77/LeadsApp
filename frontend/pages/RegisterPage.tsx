@@ -10,6 +10,7 @@ import {
 } from "../features/auth/auth.schema";
 import { AuthLayout } from "../layouts/AuthLayout";
 import { getApiError } from "../utils/ApiError";
+import { authStorage } from "../utils/authStorage";
 
 export const RegisterPage = () => {
   const navigate = useNavigate();
@@ -36,9 +37,12 @@ export const RegisterPage = () => {
 
       const response = await authApi.register(data);
 
-      localStorage.setItem("smart_leads_token", response.token);
-      localStorage.setItem("smart_leads_user_name", response.user.name);
-      localStorage.setItem("smart_leads_user_role", response.user.role);
+      authStorage.setAuth(
+        response.token,
+        response.user.name,
+        response.user.role
+      );
+
 
       navigate("/dashboard");
     } catch (error) {

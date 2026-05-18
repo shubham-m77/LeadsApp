@@ -1,18 +1,17 @@
 import type { ReactNode } from "react";
 import { LogOut } from "lucide-react";
+import { authStorage } from "../utils/authStorage";
 
 interface DashboardLayoutProps {
   children: ReactNode;
 }
 
 export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
-  const userName = localStorage.getItem("smart_leads_user_name");
-  const userRole = localStorage.getItem("smart_leads_user_role");
+  const userName = authStorage.getUserName();
+  const userRole = authStorage.getUserRole();
 
   const handleLogout = () => {
-    localStorage.removeItem("smart_leads_token");
-    localStorage.removeItem("smart_leads_user_name");
-    localStorage.removeItem("smart_leads_user_role");
+    authStorage.clearAuth();
     window.location.href = "/login";
   };
 

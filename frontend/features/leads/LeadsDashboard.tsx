@@ -22,12 +22,13 @@ import { LeadDetailsModal } from "./LeadDetailsModal";
 import { LeadFormModal } from "./LeadFormModal";
 import { useDebounce } from "../../hooks/useDebounce";
 import { getApiError } from "../../utils/ApiError";
+import { authStorage } from "../../utils/authStorage";
 
 const statusOptions: LeadStatus[] = ["New", "Contacted", "Qualified", "Lost"];
 const sourceOptions: LeadSource[] = ["Website", "Instagram", "Referral"];
 
 export const LeadsDashboard = () => {
-    const userRole = localStorage.getItem("smart_leads_user_role");
+    const userRole = authStorage.getUserRole();
 
     const [leads, setLeads] = useState<Lead[]>([]);
     const [filters, setFilters] = useState<LeadFilters>({

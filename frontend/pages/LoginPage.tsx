@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
 import { authApi } from "../api/auth.api";
+import { authStorage } from "../utils/authStorage";
 import {
   loginSchema,
   type LoginFormData
@@ -34,9 +35,11 @@ export const LoginPage = () => {
 
       const response = await authApi.login(data);
 
-      localStorage.setItem("smart_leads_token", response.token);
-      localStorage.setItem("smart_leads_user_name", response.user.name);
-      localStorage.setItem("smart_leads_user_role", response.user.role);
+      authStorage.setAuth(
+        response.token,
+        response.user.name,
+        response.user.role
+      );
 
       navigate("/dashboard");
     } catch (error) {

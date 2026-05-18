@@ -1,5 +1,5 @@
 import axios from "axios";
-
+import {authStorage} from "../utils/authStorage";
 export const api = axios.create({
     baseURL: import.meta.env.VITE_API_BASE_URL ,
     headers:{
@@ -16,3 +16,20 @@ api.interceptors.request.use((config) => {
 
   return config;
 });
+
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    const statusCode = error.response?.status;
+
+    if (statusCode === 401) {
+      authStorage.clearAuth();
+
+      if (window.location.pathname !== "/login") {
+        window.location.href = "/login";
+      }
+    }
+
+    return Promise.reject(error);
+  }
+);
