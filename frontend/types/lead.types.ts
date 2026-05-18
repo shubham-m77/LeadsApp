@@ -1,4 +1,4 @@
-import { UserRole } from "./auth.types";
+import type { UserRole } from "./auth.types";
 
 export type LeadStatus = "New" | "Contacted" | "Qualified" | "Lost";
 

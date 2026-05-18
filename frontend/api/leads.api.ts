@@ -1,5 +1,5 @@
 import { api } from "./axios"
-import {Lead, LeadFilters, LeadFormInput, LeadsResponse} from "../types/lead.types"
+import type { Lead, LeadFilters, LeadFormInput, LeadsResponse } from "../types/lead.types"
 interface singleLeadResponse{
     success:boolean,
     message:string,

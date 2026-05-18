@@ -1,4 +1,4 @@
-import { AuthResponse, loginInput, registerInput } from "../types/auth.types";
+import type { AuthResponse, loginInput, registerInput } from "../types/auth.types";
 import {api} from "./axios"
 
 export const authApi = {
