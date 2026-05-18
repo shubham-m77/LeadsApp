@@ -154,15 +154,13 @@ Logs in an existing user and returns a JWT token.
 {
   "success": true,
   "message": "User logged in successfully",
-  "data": {
-    "user": {
+  "user": {
       "id": "user_id",
       "name": "Shubham Mandal",
       "email": "shubham@example.com",
       "role": "admin"
     },
-    "token": "jwt_token"
-  }
+  "token": "jwt_token"
 }
 ```
 
@@ -199,12 +197,10 @@ Authorization: Bearer <jwt_token>
 {
   "success": true,
   "message": "Authenticated user fetched successfully",
-  "data": {
-    "user": {
+  "user": {
       "userId": "user_id",
       "role": "admin"
     }
-  }
 }
 ```
 
@@ -274,8 +270,7 @@ Sales User
 {
   "success": true,
   "message": "Lead created successfully",
-  "data": {
-    "lead": {
+  "lead": {
       "_id": "lead_id",
       "name": "Rahul Sharma",
       "email": "rahul@example.com",
@@ -285,7 +280,6 @@ Sales User
       "createdAt": "2026-05-18T00:00:00.000Z",
       "updatedAt": "2026-05-18T00:00:00.000Z"
     }
-  }
 }
 ```
 
@@ -476,7 +470,6 @@ Sales User
 {
   "success": true,
   "message": "Lead fetched successfully",
-  "data": {
     "lead": {
       "_id": "lead_id",
       "name": "Rahul Sharma",
@@ -492,7 +485,6 @@ Sales User
       "createdAt": "2026-05-18T00:00:00.000Z",
       "updatedAt": "2026-05-18T00:00:00.000Z"
     }
-  }
 }
 ```
 
@@ -549,7 +541,6 @@ All fields are optional.
 {
   "success": true,
   "message": "Lead updated successfully",
-  "data": {
     "lead": {
       "_id": "lead_id",
       "name": "Rahul Sharma",
@@ -560,7 +551,6 @@ All fields are optional.
       "createdAt": "2026-05-18T00:00:00.000Z",
       "updatedAt": "2026-05-18T00:00:00.000Z"
     }
-  }
 }
 ```
 
