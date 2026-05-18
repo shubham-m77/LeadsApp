@@ -14,5 +14,16 @@ export const updateLeadSchema = z.object({
   source: z.enum(["Website", "Instagram", "Referral"]).optional()
 });
 
+export const leadQuerySchema = z.object({
+  status: z.enum(["New", "Contacted", "Qualified", "Lost"]).optional(),
+  source: z.enum(["Website", "Instagram", "Referral"]).optional(),
+  search: z.string().trim().optional(),
+  sort: z.enum(["latest", "oldest"]).optional(),
+  page: z
+    .string()
+    .regex(/^\d+$/, "Page must be a valid number")
+    .optional()
+});
+
 export type CreateLeadInput = z.infer<typeof createLeadSchema>;
 export type UpdateLeadInput = z.infer<typeof updateLeadSchema>;

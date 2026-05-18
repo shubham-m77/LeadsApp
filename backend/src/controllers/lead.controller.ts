@@ -2,7 +2,8 @@ import { success } from "zod";
 import { Lead } from "../models/lead.model";
 import { AppError } from "../utils/AppError"
 import { LeadQueryParams } from "../types/leads.types";
-import { createLeadSchema, updateLeadSchema } from "../validations/lead.validation"
+import { createLeadSchema, leadQuerySchema, updateLeadSchema } from "../validations/lead.validation"
+import { Parser } from "json2csv";
 
 export const createLeadController =  async (req: Request, res: Response): Promise<Response>=>{
     const data = createLeadSchema.parse(req.body);
@@ -146,3 +147,97 @@ export const deleteLead = async (req: Request, res: Response): Promise<Response>
           message: "Lead deleted successfully"
       });
 }
+
+export const exportLeadsToCSV = 
+  async (req: Request, res: Response): Promise<Response> => {
+    const {
+      status,
+      source,
+      search,
+      sort = "latest"
+    } = leadQuerySchema
+      .omit({
+        page: true
+      })
+      .parse(req.query);
+
+    const query: Record<string, unknown> = {};
+
+    if (status) {2
+      query.status = status;
+    }
+
+    if (source) {
+      query.source = source;
+    }
+
+    if (search) {
+      query.$or = [
+        {
+          name: {
+            $regex: search,
+            $options: "i"
+          }
+        },
+        {
+          email: {
+            $regex: search,
+            $options: "i"
+          }
+        }
+      ];
+    }
+
+    const sortOption =
+      sort === "oldest" ? { createdAt: 1 as const } : { createdAt: -1 as const };
+
+    const leads = await Lead.find(query)
+      .populate("createdBy", "name email role")
+      .sort(sortOption)
+      .lean();
+
+    if (leads.length === 0) {
+      throw new AppError("No leads found to export", 404);
+    }
+
+    const formattedLeads = leads.map((lead) => {
+      const createdBy = lead.createdBy as unknown as {
+        name?: string;
+        email?: string;
+        role?: string;
+      };
+
+      return {
+        Name: lead.name,
+        Email: lead.email,
+        Status: lead.status,
+        Source: lead.source,
+        "Created By": createdBy?.name || "N/A",
+        "Created By Email": createdBy?.email || "N/A",
+        "Created By Role": createdBy?.role || "N/A",
+        "Created At": lead.createdAt
+          ? new Date(lead.createdAt).toLocaleString()
+          : "N/A"
+      };
+    });
+
+    const fields = [
+      "Name",
+      "Email",
+      "Status",
+      "Source",
+      "Created By",
+      "Created By Email",
+      "Created By Role",
+      "Created At"
+    ];
+
+    const parser = new Parser({ fields });
+    const csv = parser.parse(formattedLeads);
+
+    const fileName = `leads-export-${Date.now()}.csv`;
+
+    res.header("Content-Type", "text/csv");
+    res.attachment(fileName);
+    return res.status(200).send(csv);
+  }
