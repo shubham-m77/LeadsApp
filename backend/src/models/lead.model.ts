@@ -10,7 +10,7 @@ export interface ILeadDoc extends Document{
     createdBy:Types.ObjectId
 }
 
-const leadSchema = new Schema<ILeadDocument>(
+const leadSchema = new Schema<ILeadDoc>(
   {
     name: {
       type: String,

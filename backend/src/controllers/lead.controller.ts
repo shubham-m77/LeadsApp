@@ -1,4 +1,5 @@
 import { success } from "zod";
+import { Request, Response } from "express";
 import { Lead } from "../models/lead.model";
 import { AppError } from "../utils/AppError"
 import { LeadQueryParams } from "../types/leads.types";
@@ -37,7 +38,7 @@ export const getLeads =  async (req: Request, res: Response): Promise<void> => {
       search,
       sort = "latest",
       page = "1"
-    } = req.query as LeadQueryParams;
+    } = leadQuerySchema.parse(req.query);
 
     const limit = 10;
     const currentPage = Math.max(Number(page) || 1, 1);
@@ -237,7 +238,7 @@ export const exportLeadsToCSV =
 
     const fileName = `leads-export-${Date.now()}.csv`;
 
-    res.header("Content-Type", "text/csv");
-    res.attachment(fileName);
+    res.set("Content-Type", "text/csv");
+    res.set("Content-Disposition", `attachment; filename="${fileName}"`);
     return res.status(200).send(csv);
   }
